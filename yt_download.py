@@ -32,7 +32,6 @@ def check_if_video_or_playlist(url):
         # URL is for a single video
         return "video"
 
-
 def make_safe(filename):
     # Remove special characters and spaces
     safe_filename = re.sub(r'[^\w\s]', '', filename)
@@ -48,8 +47,7 @@ def download_video(url, destination):
     video_title = yt.title
     print(f"Downloading: '{video_title}' ...")
     video_title_safe_for_filename = make_safe(video_title)
-    # yt.streams.filter(adaptive=True, file_extension='mp4').order_by('resolution').desc().first().download(destination)
-
+    
     if i_want_the_highest_quality:
 
         # Check if the temporary folder exists and create it if it doesn't
@@ -58,9 +56,9 @@ def download_video(url, destination):
             os.makedirs(temp_folder)
             print(f"Folder '{temp_folder}' created!")
 
-        # print("Downloading the highest-possible quality video ...")
-        # video_file_name = "video.mp4"
-        # yt.streams.filter(adaptive=True).order_by('resolution').desc().first().download(output_path=temp_folder, filename=video_file_name)
+        print("Downloading the highest-possible quality video ...")
+        video_file_name = "video.mp4"
+        yt.streams.filter(adaptive=True).order_by('resolution').desc().first().download(output_path=temp_folder, filename=video_file_name)
 
         print("Downloading the audio ... ")
         audio_file_name = "audio.mp3"
@@ -82,6 +80,9 @@ def download_video(url, destination):
         # Use ffmpeg to combine the audio and video
         subprocess.run(["ffmpeg", "-i", audio_file, "-i", video_file, "-c", "copy", output_file])
         print("Combined audio and video successfully")
+
+        # Clean-up by removing the 'temp_folder' completely
+        # TODO
 
         return None
 
