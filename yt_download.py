@@ -21,7 +21,7 @@ import re
 # - Do not worry for destinations not existing: it will create them for you.
 #################################
 
-i_want_the_highest_quality = False
+i_want_the_highest_quality = True
 
 def check_if_video_or_playlist(url):
     # Check if the URL is for a playlist or a single video
@@ -52,6 +52,7 @@ def download_video(url, destination):
 
         # Check if the temporary folder exists and create it if it doesn't
         temp_folder = "temp_folder"
+
         if not os.path.exists(temp_folder):
             os.makedirs(temp_folder)
             print(f"Folder '{temp_folder}' created!")
@@ -81,10 +82,24 @@ def download_video(url, destination):
         subprocess.run(["ffmpeg", "-i", audio_file, "-i", video_file, "-c", "copy", output_file])
         print("Combined audio and video successfully")
 
-        # Clean-up by removing the 'temp_folder' completely
-        # TODO
+        ### Clean-up by removing the 'temp_folder' completely
+        # Check if the folder exists
+        if not os.path.exists(temp_folder):
+            print(f"{temp_folder} does not exist")
+            return
 
-        return None
+        # Remove all contents of the folder (if existing)
+        for root, dirs, files in os.walk(temp_folder):
+            print(root, dirs, files)
+            for f in files:
+                os.unlink(os.path.join(root, f))
+            for d in dirs:
+                os.rmdir(os.path.join(root, d))
+
+        # Remove the folder itself
+        os.rmdir(temp_folder)
+
+        return
 
     # If I do not need the highest quality, I take the fast approach
     video_title_safe_for_filename = video_title_safe_for_filename + ".mp4"
